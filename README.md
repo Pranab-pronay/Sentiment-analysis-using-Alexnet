@@ -119,8 +119,8 @@ words = list(model.wv.vocab)
 print('total word: %d' %len(words))
 ```
 
-    G:\Anaconda\lib\site-packages\gensim\utils.py:1197: UserWarning: detected Windows; aliasing chunkize to chunkize_serial
-      warnings.warn("detected Windows; aliasing chunkize to chunkize_serial")
+   E:pranab\New folder\envs\awesome\lib\site-packages\gensim\utils.py:1197: UserWarning: detected Windows; aliasing chunkize to chunkize_serial
+  warnings.warn("detected Windows; aliasing chunkize to chunkize_serial")
     
 
     total word: 21481
@@ -137,7 +137,8 @@ model.wv.save_word2vec_format(filename,binary=False)
 
 
 ```
-
+E:pranab\New folder\envs\awesome\lib\site-packages\smart_open\smart_open_lib.py:398: UserWarning: This function is deprecated, use smart_open.open instead. See the migration notes for details: https://github.com/RaRe-Technologies/smart_open/blob/master/README.rst#migrating-to-the-new-open-function
+  'See the migration notes for details: %s' % _MIGRATION_NOTES_URL
 # Mapping words and their corrosponding vectors
 
 In this step first an empty dictionary is initialized then the word2vec model is read.For each word their corresponding vector is mapped from word2Vec model 
@@ -204,10 +205,10 @@ print(num_words)
     21482
     
 
-# RNN model 
+# Alexnet model 
 
-In this step,we will create our RNN model.Keras sequential model is used here and on the first layer we will feed the word embeddings as the embedding layer.<br>
-Next, GRU-an RNN architecture, which is similar to LSTM will be used.Here,both dropout and recurrent_dropout is used for to drop for the linear transformation of the inputs and to drop for the linear transformation of the recurrent state respectively.<br>
+In this step,We used AlexNet architecture to build the Sentimental analysis model. The AlexNet architecture consists of five convolutional layers, some of which are followed by maximum pooling layers and then one fully-connected layers and finally store it in sigmoid function..<br>
+
 For output layer Dense layer has been used and units has been set to 1 as our model is to predict binary classification.Sigmoid is used as an activation function.<br>
 for calculating loss 'binary_crossentropy' has been used. It's a method of evaluating how well specific algorithm models the given data.There are some other loss function as well.But for binary classifiaction 'binary_crossentropy' is the suitable one.<br>
 Adam has been used as the optimizer.The function of optimizer is to minimize the loss.There are also so many optimizers available.You can use any to see which fits well.<br>
@@ -216,35 +217,61 @@ Adam has been used as the optimizer.The function of optimizer is to minimize the
 
 
 ```python
-
 from keras.models import Sequential
-from keras.layers import Dense,GRU
 from keras.layers.embeddings import Embedding
-from keras.initializers import constant
-
+from keras.layers.core import Dense, Activation, Dropout, Flatten
+from keras.layers.convolutional import Conv1D, MaxPooling1D
+print("training CNN ...")
 model = Sequential()
-embedding_layer =  Embedding(num_words,100,embeddings_initializer= constant(embedd),input_length=100,trainable=False)
-model.add(embedding_layer)
-model.add(GRU(units=32, dropout=0.2,recurrent_dropout=0.2))
-model.add(Dense(1,activation='sigmoid'))
-model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+model.add(Embedding(num_words, embed_dim,
+          weights=[embedd], input_length=100, trainable=False))
+model.add(Conv1D(num_filters, 7, activation='sigmoid', padding='same'))
+model.add(MaxPooling1D(2))
+model.add(Conv1D(num_filters, 7, activation='sigmoid', padding='same'))
+model.add(MaxPooling1D(2))
+model.add(Conv1D(num_filters, 7, activation='sigmoid', padding='same'))
+model.add(Conv1D(num_filters, 7, activation='sigmoid', padding='same'))
+model.add(Conv1D(num_filters, 7, activation='sigmoid', padding='same'))
+model.add(MaxPooling1D(2))
+model.add(Flatten())
+model.add(Dropout(0.5))
+model.add(Dense(1, activation='sigmoid'))  
+model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
 model.summary()
-```
 
-    _________________________________________________________________
-    Layer (type)                 Output Shape              Param #   
-    =================================================================
-    embedding_2 (Embedding)      (None, 100, 100)          2148200   
-    _________________________________________________________________
-    gru_2 (GRU)                  (None, 32)                12768     
-    _________________________________________________________________
-    dense_2 (Dense)              (None, 1)                 33        
-    =================================================================
-    Total params: 2,161,001
-    Trainable params: 12,801
-    Non-trainable params: 2,148,200
-    _________________________________________________________________
-    
+```
+training CNN ...
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+embedding_9 (Embedding)      (None, 100, 100)          2148200   
+_________________________________________________________________
+conv1d_39 (Conv1D)           (None, 100, 64)           44864     
+_________________________________________________________________
+max_pooling1d_21 (MaxPooling (None, 50, 64)            0         
+_________________________________________________________________
+conv1d_40 (Conv1D)           (None, 50, 64)            28736     
+_________________________________________________________________
+max_pooling1d_22 (MaxPooling (None, 25, 64)            0         
+_________________________________________________________________
+conv1d_41 (Conv1D)           (None, 25, 64)            28736     
+_________________________________________________________________
+conv1d_42 (Conv1D)           (None, 25, 64)            28736     
+_________________________________________________________________
+conv1d_43 (Conv1D)           (None, 25, 64)            28736     
+_________________________________________________________________
+max_pooling1d_23 (MaxPooling (None, 12, 64)            0         
+_________________________________________________________________
+flatten_5 (Flatten)          (None, 768)               0         
+_________________________________________________________________
+dropout_16 (Dropout)         (None, 768)               0         
+_________________________________________________________________
+dense_20 (Dense)             (None, 1)                 769       
+=================================================================
+Total params: 2,308,777
+Trainable params: 160,577
+Non-trainable params: 2,148,200
+
 
 # Creating Training and Testing set
 
@@ -292,38 +319,28 @@ model.fit(X_train_pad,y_train,batch_size=64,epochs=10,validation_data= (X_test_p
 
 
 ```
-
-    WARNING:tensorflow:From G:\Anaconda\lib\site-packages\tensorflow\python\ops\math_ops.py:3066: to_int32 (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
-    Instructions for updating:
-    Use tf.cast instead.
-    Train on 29942 samples, validate on 7485 samples
-    Epoch 1/10
-     - 31s - loss: 0.4459 - acc: 0.7916 - val_loss: 0.3848 - val_acc: 0.8179
-    Epoch 2/10
-     - 32s - loss: 0.3831 - acc: 0.8207 - val_loss: 0.3651 - val_acc: 0.8283
-    Epoch 3/10
-     - 32s - loss: 0.3699 - acc: 0.8277 - val_loss: 0.3509 - val_acc: 0.8411
-    Epoch 4/10
-     - 33s - loss: 0.3588 - acc: 0.8355 - val_loss: 0.3407 - val_acc: 0.8445
-    Epoch 5/10
-     - 33s - loss: 0.3498 - acc: 0.8402 - val_loss: 0.3352 - val_acc: 0.8485
-    Epoch 6/10
-     - 34s - loss: 0.3446 - acc: 0.8440 - val_loss: 0.3347 - val_acc: 0.8473
-    Epoch 7/10
-     - 35s - loss: 0.3371 - acc: 0.8479 - val_loss: 0.3286 - val_acc: 0.8478
-    Epoch 8/10
-     - 36s - loss: 0.3335 - acc: 0.8508 - val_loss: 0.3196 - val_acc: 0.8542
-    Epoch 9/10
-     - 38s - loss: 0.3286 - acc: 0.8522 - val_loss: 0.3157 - val_acc: 0.8569
-    Epoch 10/10
-     - 38s - loss: 0.3241 - acc: 0.8567 - val_loss: 0.3136 - val_acc: 0.8577
-    
-
-
-
-
-    <keras.callbacks.History at 0x2af1e2e24a8>
-
+Train on 29942 samples, validate on 7485 samples
+Epoch 1/10
+ - 36s - loss: 0.1657 - acc: 0.7771 - val_loss: 0.1454 - val_acc: 0.7848
+Epoch 2/10
+ - 34s - loss: 0.1384 - acc: 0.7952 - val_loss: 0.1251 - val_acc: 0.8138
+Epoch 3/10
+ - 34s - loss: 0.1260 - acc: 0.8206 - val_loss: 0.1171 - val_acc: 0.8322
+Epoch 4/10
+ - 35s - loss: 0.1194 - acc: 0.8306 - val_loss: 0.1146 - val_acc: 0.8366
+Epoch 5/10
+ - 35s - loss: 0.1147 - acc: 0.8384 - val_loss: 0.1135 - val_acc: 0.8362
+Epoch 6/10
+ - 34s - loss: 0.1108 - acc: 0.8446 - val_loss: 0.1082 - val_acc: 0.8481
+Epoch 7/10
+ - 34s - loss: 0.1084 - acc: 0.8476 - val_loss: 0.1084 - val_acc: 0.8470
+Epoch 8/10
+ - 35s - loss: 0.1034 - acc: 0.8584 - val_loss: 0.1179 - val_acc: 0.8305
+Epoch 9/10
+ - 34s - loss: 0.1017 - acc: 0.8590 - val_loss: 0.1030 - val_acc: 0.8564
+Epoch 10/10
+ - 34s - loss: 0.0992 - acc: 0.8641 - val_loss: 0.1025 - val_acc: 0.8569
+  
 
 
 # Evaluting the model
@@ -334,7 +351,7 @@ score = model.evaluate(X_test_pad, y_test, verbose=0)
 print("Testing Accuracy:  {:.4f}".format(accuracy))
 ```
 
-    Testing Accuracy:  0.8577
+    Testing Accuracy:  0.8569
     
 
 # printing accuracy
@@ -344,7 +361,7 @@ print("Testing Accuracy:  {:.4f}".format(accuracy))
 print("Accuracy: %.2f%%" % (score[1]*100))
 ```
 
-    Accuracy: 85.77%
+    Accuracy: 85.69%
     
 
 # Testing sample dataset
@@ -354,8 +371,8 @@ Here we will give there sample test dataset to see whether our model can predict
 
 ```python
 test_sample1="just loving it"
-test_sample2="I hate using this button,please fix it"
-test_sample3="this app is bad "
+test_sample2="no comments"
+test_sample3="totally bad "
 
 
 test_samples = [test_sample1,test_sample2,test_sample3]
@@ -370,14 +387,15 @@ model.predict(x =pad)
 
 
 
-    array([[0.93707865],
-           [0.2900746 ],
-           [0.09323388]], dtype=float32)
+   array([[0.9669348],
+       [0.6705882],
+       [0.1296682]], dtype=float32)
 
 
 
 # Here we can see that our model has given a good result as it can classify the reviews as positive and negative.
 
+# updated by @pranab-pronay orginial text by @ash-raf10
 
 ```python
 
