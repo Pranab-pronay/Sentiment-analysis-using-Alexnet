@@ -240,9 +240,10 @@ model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
 model.summary()
 
 ```
+```python
 training CNN ...
 _________________________________________________________________
-Layer (type)                 Output Shape              Param #   
+Layer (type)                 Output Shape              Param #    
 =================================================================
 embedding_9 (Embedding)      (None, 100, 100)          2148200   
 _________________________________________________________________
@@ -271,7 +272,7 @@ dense_20 (Dense)             (None, 1)                 769
 Total params: 2,308,777
 Trainable params: 160,577
 Non-trainable params: 2,148,200
-
+```
 
 # Creating Training and Testing set
 
