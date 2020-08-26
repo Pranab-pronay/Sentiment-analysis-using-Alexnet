@@ -1,5 +1,5 @@
 
-# Sentiment Analysis using Alexnet
+# Sentiment Analysis using CNN based model Alexnet
 
 Sentiment Analysis is the most common text classification tool that analyses an
 incoming comments and determines whether the particular sentiment is positive,
