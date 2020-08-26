@@ -1,9 +1,23 @@
 
-# Sentiment Analysis on Playstore reviews
+# Sentiment Analysis using Alexnet
 
-The aim of this project is to classify playstore reviews as positive or negative..Developers often find it difficult
-understanding and finding out how and where to improve the applications functionality as rating alone does not provide any
-useful information regarding this matter.This is where analyzing textual comments would come to a great benefit.The proposed model can detect positive or negative comments automatecially and later can be clustered to find out which things that users are liking and which can/should be improved.<br>
+Sentiment Analysis is the most common text classification tool that analyses an
+incoming comments and determines whether the particular sentiment is positive,
+negative or neutral.  Sentiment analysis can pick up positive or negative feedback,
+and give us real-time alerts so that we can easily respond towards any feedback. It’s
+also known as opinion mining, generally it emanates the feedback of a customer.
+According to our customers positive and negative comments about something
+related to our application, we can ensure the good quality of our application by
+modifying it. Sentimental analysis can be used in various fields such as Business,
+Politics, and Public action and so on. In this project we are mainly focusing on good
+quality of applications based on customers review using convolutional neural
+network. A convolutional neural network is a class of deep neural networks that have
+proven very effective in areas such as image recognition and classification. Here we
+are detecting customers good or bad review that can be positive or negative by using
+collection of feedback comprise fields such as tourism, costumer review, finance,
+software engineering, speech conversation, social media content, news and so on.
+. In our proposed model, we train our system to learning the process that identifies
+the difference between positive and negative feedback.<br>
 
 The Dataset was collected from <a href="https://www.kaggle.com/lava18/google-play-store-apps">Play store App Review</a>
 
