@@ -410,7 +410,7 @@ model.predict(x =pad)
 
 # Here we can see that our model has given a good result as it can classify the reviews as positive and negative.
 
-# updated by @pranab-pronay orginial text by @ash-raf10
+## updated by @pranab-pronay orginially from @ash-raf10
 
 ```python
 
